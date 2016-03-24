@@ -15,7 +15,7 @@ public class Const {
     public static HashMap<String,Phone> phoneMap;
 
     public static final String BASE_URL= "http://61.8.195.42/";
-    public static final String ACCESS_TOKEN_URL= BASE_URL+"authuser";
+    public static final String ACCESS_TOKEN_URL= BASE_URL+"api/authuser";
     public static final String CONFIRM_GRUC_MOBILE_URL = BASE_URL+"api/op/matchmobile";
 
     /**
