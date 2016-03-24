@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">ContactDemo</string>
+    <string name="action_settings">Settings</string>
+    <string name="problem_internet">There is a problem with internet connection.Please try again later.</string>
+</resources>
