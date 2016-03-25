@@ -119,7 +119,9 @@ public class PhonesLoader implements LoaderManager.LoaderCallbacks<Cursor> {
 
                 String number = cursor.getString(PHONE_NUMBER).replace(" ", "");
                 String contactName = cursor.getString(PHONE_NAME);
-
+                /**
+                 * 过滤掉同名同号码的Phone
+                 */
                 if(hs.add(number+contactName)){
                     String photo_thumbnail = cursor.getString(PHONE_PHOTO_ID);
                     String type = cursor.getString(PHONE_TYPE);

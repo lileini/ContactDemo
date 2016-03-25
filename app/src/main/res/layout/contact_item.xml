@@ -31,7 +31,7 @@
             android:paddingRight="11dp">
 
 
-            <com.example.administrator.contactdemo.widget.CircleImageView
+            <com.example.administrator.contactdemo.ui.widget.CircleImageView
                 android:id="@+id/contact_item_image"
                 android:layout_width="53dp"
                 android:layout_height="53dp"
@@ -69,7 +69,7 @@
                         android:textColor="#898e91"
                         android:textSize="16.67sp"/>
 
-                    <com.example.administrator.contactdemo.widget.MarqueeTextView
+                    <com.example.administrator.contactdemo.ui.widget.MarqueeTextView
                         android:id="@+id/contact_item_phone_number"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

@@ -15,7 +15,7 @@ import com.example.administrator.contactdemo.R;
 import com.example.administrator.contactdemo.contact.Phone;
 import com.example.administrator.contactdemo.util.MyImageCache;
 import com.example.administrator.contactdemo.util.UiUtil;
-import com.example.administrator.contactdemo.widget.CircleImageView;
+import com.example.administrator.contactdemo.ui.widget.CircleImageView;
 
 import java.util.List;
 
@@ -26,13 +26,22 @@ public class PhoneAdapter extends BaseAdapter {
     public PhoneAdapter(Context context, List<Phone> phoneList) {
         this.phoneList = phoneList;
         this.context = context;
+        refreshMyCache();
     }
 
-    public PhoneAdapter(Context context) {
-        this.context = context;
+    private void refreshMyCache() {
+        if (phoneList != null && phoneList.size()>0)
+        myCache = new MyImageCache(phoneList.size());
+    }
+
+    public void addPhoneList(List<Phone> phoneList) {
+
+        refreshMyCache();
     }
 
     public void setPhoneList(List<Phone> phoneList) {
+        if (myCache == null)
+            myCache = new MyImageCache(phoneList.size());
         this.phoneList = phoneList;
     }
 
@@ -76,12 +85,11 @@ public class PhoneAdapter extends BaseAdapter {
 
         Phone phone = phoneList.get(position);
 
-        /*if (phone.getPhoto_thumbnail() != null){
-            viewHolder.contactItemImage.setImageBitmap(getContactBitmap(position, phone));
-        }*/
+
         viewHolder.contactItemName.setText(phone.getContactName());
         viewHolder.contactItemPhoneNumber.setText(phone.getCountryCode()+phone.getNumber());
-        viewHolder.contactItemNumberType.setText(phone.getType()+" : ");
+        viewHolder.contactItemNumberType.setText(phone.getType() + " : ");
+        viewHolder.contactItemImage.setImageBitmap(getContactBitmap(position, phone));
         switch (phone.getGrucType()){
             case Phone.GrucType.SYSTEM:
                 viewHolder.tvGrucType.setText("invite");
@@ -90,7 +98,7 @@ public class PhoneAdapter extends BaseAdapter {
                 viewHolder.tvGrucType.setText("friend");
                 break;
             case Phone.GrucType.GRUC:
-                viewHolder.tvGrucType.setText("add");
+                viewHolder.tvGrucType.setText("add friend");
                 break;
         }
         return convertView;
@@ -129,6 +137,7 @@ public class PhoneAdapter extends BaseAdapter {
         }
         return bitmap;
     }
+
 
     static class ViewHolder {
         CircleImageView contactItemImage;

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.Loader;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.ListView;
@@ -18,6 +19,7 @@ import com.example.administrator.contactdemo.contact.Phone;
 import com.example.administrator.contactdemo.contact.PhonesLoader;
 import com.example.administrator.contactdemo.entity.Const;
 import com.example.administrator.contactdemo.entity.GrucMobilesResult;
+import com.example.administrator.contactdemo.observer.ContactObserver;
 import com.example.administrator.contactdemo.service.ContactService;
 import com.example.administrator.contactdemo.util.NetworkManager;
 import com.example.administrator.contactdemo.util.PermissionManager;
@@ -35,7 +37,6 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private ListView listView;
     PhoneAdapter phoneAdapter;
-    Loader loader;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,21 +61,36 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+    ContactObserver mContactObserver;
     private void init() {
         EventBus.getDefault().register(this);
+        mContactObserver = new ContactObserver(this,null);
         if (new PermissionManager(this).checkPermissionAll(PermissionManager.PERMISSION_READ_CONTACTS, true)) {
             try {
-                loader = getLoaderManager().initLoader(0, null, PhonesLoader.getInstance(this));
+                Loader loader = getLoaderManager().initLoader(0, null, PhonesLoader.getInstance(this));
                 loader.startLoading();
             } catch (Exception e) {
+                Log.i(TAG,"loader 启动失败");
                 e.printStackTrace();
             }
         }
 
-        IntentFilter filter = new IntentFilter(Const.CONTACT_LOAD_FINISHED);
-        registerReceiver(phoneLoadReciever, filter);
+
+        registerContactObserverAndReceiver();
     }
 
+
+    private void registerContactObserverAndReceiver() {
+        IntentFilter filter = new IntentFilter(Const.CONTACT_LOAD_FINISHED);
+        registerReceiver(phoneLoadReciever, filter);
+        this.getContentResolver().registerContentObserver(ContactsContract.RawContacts.CONTENT_URI, true, mContactObserver);
+    }
+
+    private void unRegisterReceiverAndObserver() {
+        unregisterReceiver(phoneLoadReciever);
+        this.getContentResolver().unregisterContentObserver(mContactObserver);
+
+    }
     /**
      * 接收eventBus发送的事件，更新电话的标记
      */
@@ -86,8 +102,8 @@ public class MainActivity extends AppCompatActivity {
                 return;
             Phone phone = Const.phoneMap.get(s);
             if (phone !=  null){
-                if (phone.getGrucType() == 0)
-                    phone.setGrucType(2);
+                if (phone.getGrucType() == Phone.GrucType.SYSTEM)
+                    phone.setGrucType(Phone.GrucType.GRUC);
             }
         }
         runOnUiThread(new Runnable() {
@@ -98,20 +114,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-    /**
-     * 更新PhoneList
-     */
-    public void updatePhone(){
-        if (loader != null) {
-            //                allowUpdate = false;
-            Log.i(TAG, TAG + "action=" + 1);
 
-            loader.startLoading();
-        } else {
-            Log.i(TAG, TAG + "action=" + 2);
-            loader = getLoaderManager().initLoader(0, null, PhonesLoader.getInstance(this));
-        }
-    }
 
     private void initView() {
         listView = (ListView) findViewById(R.id.listView);
@@ -136,16 +139,7 @@ public class MainActivity extends AppCompatActivity {
             Intent intentService = new Intent(MainActivity.this, ContactService.class);
             intentService.addFlags(Const.INTENT_FLAG0);
             MainActivity.this.startService(intentService);
-            /*if (TextUtils.isEmpty(sharePrefrenceManager.getAccessToken())){//这里没考虑token的失效日期
-                requestAccessToken();
-            }else {
-                if (NetworkManager.isNetworkAvailable(this)){
 
-                    requestGrucMobile();
-                }else {
-                    Toast.makeText(this, R.string.problem_internet, Toast.LENGTH_SHORT).show();
-                }
-            }*/
         }
     };
 
@@ -153,8 +147,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(phoneLoadReciever);
+
         EventBus.getDefault().unregister(this);
+        unRegisterReceiverAndObserver();
     }
 
 }

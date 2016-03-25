@@ -14,6 +14,7 @@ import com.example.administrator.contactdemo.contact.Phone;
 import com.example.administrator.contactdemo.entity.Const;
 import com.example.administrator.contactdemo.entity.GrucMobile;
 import com.example.administrator.contactdemo.entity.GrucMobilesResult;
+import com.example.administrator.contactdemo.entity.TokenErrorResult;
 import com.example.administrator.contactdemo.entity.UserDate;
 import com.example.administrator.contactdemo.util.GsonUtil;
 import com.example.administrator.contactdemo.util.HttpUtils;
@@ -105,6 +106,16 @@ public class ContactService extends IntentService {
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
                 Log.d(TAG, "ex.getMessage() = " + ex.getMessage());
+                if (BuildConfig.DEBUG)
+                    Log.d(TAG,"ex.toString() = "+ex.toString());
+                String result = ex.toString();
+                result = result.substring(result.indexOf("result: ")+8);
+                Log.i(TAG,"result = "+result);
+                TokenErrorResult tokenErrorResult = GsonUtil.getResult(result, TokenErrorResult.class);
+                if ("PermissionError:this api need auth".equals(tokenErrorResult.getDescription())){
+                    requestAccessToken();
+                    Log.i(TAG," requestAccessToken()");
+                }
             }
 
             @Override
@@ -118,11 +129,11 @@ public class ContactService extends IntentService {
             }
         }, params);
     }
-
+//    {"username": "d1_m1_u1","password":"123456","domain":"caas.grcaassip.com"}
     private void requestAccessToken() {
         String URL = Const.ACCESS_TOKEN_URL;
         RequestParams params = new RequestParams(URL);
-        UserDate userDate = new UserDate("d1_m1_u1","123456","d1_m1.gnum.com");
+        UserDate userDate = new UserDate("d1_m1_u1","123456","caas.grcaassip.com");
 
         Gson gson = new Gson();
         String s = gson.toJson(userDate);
@@ -147,8 +158,7 @@ public class ContactService extends IntentService {
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                Log.d(TAG, "e.getMessage() = " + ex.getMessage());
-
+                Log.d(TAG, "ex.getMessage() = " + ex.getMessage());
             }
 
             @Override

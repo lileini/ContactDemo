@@ -1,4 +1,4 @@
-package com.example.administrator.contactdemo.widget;
+package com.example.administrator.contactdemo.ui.widget;
 
 import android.content.Context;
 import android.graphics.Rect;
