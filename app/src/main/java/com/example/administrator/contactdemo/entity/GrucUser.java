@@ -1,37 +1,50 @@
 package com.example.administrator.contactdemo.entity;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
-
 public class GrucUser {
-    private String m;
-    private String u;
+    private String mobile;
+    private String name;
+    private String nickname;
+    private String email;
 
-    public List<GrucUser> arrayMatchsEntityFromData(String str) {
-
-        Type listType = new TypeToken<ArrayList<GrucUser>>() {
-        }.getType();
-
-        return new Gson().fromJson(str, listType);
+    public String getMobile() {
+        return mobile;
     }
 
-    public void setM(String m) {
-        this.m = m;
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
     }
 
-    public void setU(String u) {
-        this.u = u;
+    public String getName() {
+        return name;
     }
 
-    public String getM() {
-        return m;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getU() {
-        return u;
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    @Override
+    public String toString() {
+        return "GrucUser{" +
+                "mobile='" + mobile + '\'' +
+                ", name='" + name + '\'' +
+                ", nickname='" + nickname + '\'' +
+                ", email='" + email + '\'' +
+                '}';
     }
 }

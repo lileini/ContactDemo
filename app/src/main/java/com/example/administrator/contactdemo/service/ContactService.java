@@ -11,11 +11,17 @@ import android.widget.Toast;
 import com.example.administrator.contactdemo.BuildConfig;
 import com.example.administrator.contactdemo.R;
 import com.example.administrator.contactdemo.contact.Phone;
+import com.example.administrator.contactdemo.contact.PhoneDao;
+import com.example.administrator.contactdemo.contact.PhoneDbHelper;
 import com.example.administrator.contactdemo.entity.Const;
 import com.example.administrator.contactdemo.entity.GrucMobile;
 import com.example.administrator.contactdemo.entity.GrucMobilesResult;
+import com.example.administrator.contactdemo.entity.GrucUserResult;
 import com.example.administrator.contactdemo.entity.TokenErrorResult;
 import com.example.administrator.contactdemo.entity.UserDate;
+import com.example.administrator.contactdemo.gruc.GrucDao;
+import com.example.administrator.contactdemo.gruc.GrucDbHelper;
+import com.example.administrator.contactdemo.gruc.ObjectsEntity;
 import com.example.administrator.contactdemo.util.GsonUtil;
 import com.example.administrator.contactdemo.util.HttpUtils;
 import com.example.administrator.contactdemo.util.NetworkManager;
@@ -36,6 +42,11 @@ public class ContactService extends IntentService {
 
     private static final String TAG = "ContactService";
     SharePrefrenceManager sharePrefrenceManager;
+    private PhoneDbHelper phoneDbHelper;
+    private PhoneDao phoneDao;
+    private GrucDbHelper grucDbHelper;
+    private GrucDao grucDao;
+
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.
      *
@@ -48,6 +59,8 @@ public class ContactService extends IntentService {
     public void onCreate() {
         super.onCreate();
         sharePrefrenceManager = new SharePrefrenceManager(this);
+        phoneDbHelper = new PhoneDbHelper(this);
+        grucDbHelper = new GrucDbHelper(this);
     }
 
     @Nullable
@@ -69,12 +82,91 @@ public class ContactService extends IntentService {
                 if (NetworkManager.isNetworkAvailable(this)){
 
                     requestGrucMobile();
+                    requestAllGrucUser(100,1);
                 }else {
                     Toast.makeText(this, R.string.problem_internet, Toast.LENGTH_SHORT).show();
                 }
             }
 
     }
+
+    private void requestAllGrucUser(final int results_per_page, final int page) {
+        String Url = Const.GRUC_USER_URL+"?results_per_page="+results_per_page+"&page="+page;
+        RequestParams params = new RequestParams(Url);
+        params.addHeader("Content-Type", "application/json");
+        Log.i(TAG, "sharePrefrenceManager.getAccessToken() = " + sharePrefrenceManager.getAccessToken());
+        params.addHeader("Authorization", "JWT "+sharePrefrenceManager.getAccessToken());
+        HttpUtils.HttpGetMethod(new Callback.CacheCallback<String>() {
+            @Override
+            public boolean onCache(String result) {
+                return false;
+            }
+
+            @Override
+            public void onSuccess(String result) {
+                if (BuildConfig.DEBUG)
+                    Log.d(TAG, "requestAllGrucUser result = " + result);
+                GrucUserResult grucUserResult = GsonUtil.getResult(result,GrucUserResult.class);
+                if (grucUserResult == null)
+                    return;
+                List<ObjectsEntity> objects = grucUserResult.getObjects();
+                int total_pages = grucUserResult.getTotal_pages();
+                int page1 = grucUserResult.getPage();
+                Log.i(TAG,"total_pages = "+total_pages);
+                Log.i(TAG,"page1 = "+page1);
+                if (objects == null)
+                    return;
+                if (page1 <= total_pages){
+                    if (page1 == 1 ){
+                        Const.grucUsersList = objects;
+                    }else {
+                        Const.grucUsersList.addAll(objects);
+                    }
+                    if (page1 < total_pages){
+
+                        requestAllGrucUser(results_per_page,page1+1);
+                        return;
+                    }
+                }
+                grucDbHelper.onUpgrade(grucDbHelper.getWritableDatabase(),0,1);
+                if (grucDao == null){
+                    grucDao  = new GrucDao(ContactService.this);
+                }
+                grucDao.saveGrucList(Const.grucUsersList);
+                Log.i(TAG,"Const.grucUsersList.size() = "+Const.grucUsersList.size());
+                //                EventBus.getDefault().post();
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                Log.d(TAG, "ex.getMessage() = " + ex.getMessage());
+                if (BuildConfig.DEBUG)
+                    Log.d(TAG, "ex.toString() = " + ex.toString());
+                String result = ex.toString();
+                result = result.substring(result.indexOf("result: ") + 8);
+                Log.i(TAG, "result = " + result);
+                TokenErrorResult tokenErrorResult = GsonUtil.getResult(result, TokenErrorResult.class);
+                if ("PermissionError:this api need auth".equals(tokenErrorResult.getDescription())) {
+                    requestAccessToken();
+                    Log.i(TAG, " requestAccessToken()");
+                }
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+
+            }
+        }, params);
+    }
+
+    /**
+     * 请求匹配mobile
+     */
     private void requestGrucMobile() {
         String Url = Const.CONFIRM_GRUC_MOBILE_URL;
         RequestParams params = new RequestParams(Url);
@@ -119,6 +211,11 @@ public class ContactService extends IntentService {
 //                        Log.i(TAG, "matchsEntity.getI() = "+ matchsEntity.getI());
                     }
                 }
+                phoneDbHelper.onUpgrade(phoneDbHelper.getWritableDatabase(),0,1);
+                if (phoneDao == null){
+                    phoneDao  = new PhoneDao(ContactService.this);
+                }
+                phoneDao.savePhones(Const.phoneList);
                 EventBus.getDefault().post(matchs.get(0));
             }
 

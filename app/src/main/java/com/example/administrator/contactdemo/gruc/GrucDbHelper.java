@@ -1,30 +1,30 @@
-package com.example.administrator.contactdemo.contact;
+package com.example.administrator.contactdemo.gruc;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-public class PhoneDbHelper extends SQLiteOpenHelper{
+public class GrucDbHelper extends SQLiteOpenHelper{
     private static final String name = "demoDB";
-    private String TABLE_NAME = "phones";
+    private String TABLE_NAME = "gruc";
     private static final int version = 1;
 
-    public PhoneDbHelper(Context context) {
+    public GrucDbHelper(Context context) {
         super(context, name, null, version);
     }
 
-//    private String type;
-//    private String number;
-//    private String photo_thumbnail;
-//    private String contactId;
-//    private String contactName;
-//    private String contactVersion;
-//    private String countryCode = "";
+//    private String email;
+//    private boolean enable;
+//    private Object icon_url;
+//    private String id;
+//    private String mobile;
+//    private String name;
+//    private Object nickname;
     @Override
     public void onCreate(SQLiteDatabase db) {
         String s = "create table if not exists "+ TABLE_NAME+"(_id integer primary key autoincrement," +
-                "_type integer,_number text,_photo_thumbnail text, _contactId text," +
-                " _contactName text, _contactVersion text, _countryCode text,_grucType,_gruc_photo,_gruc_name)";
+                "_icon_url integer,_mobile text,_name text,_nickname text," +
+                "_email text)";
         db.execSQL(s);
     }
 
@@ -40,5 +40,4 @@ public class PhoneDbHelper extends SQLiteOpenHelper{
     public void setTableName(String tableName){
         TABLE_NAME = tableName;
     }
-
 }

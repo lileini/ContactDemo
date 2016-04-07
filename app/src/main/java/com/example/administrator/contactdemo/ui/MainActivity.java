@@ -76,6 +76,9 @@ public class MainActivity extends AppCompatActivity {
         registerContactObserverAndReceiver();
     }
 
+    /**
+     * 刷新联系人
+     */
     private void startPhoneLoader() {
         if (new PermissionManager(this).checkPermissionAll(PermissionManager.PERMISSION_READ_CONTACTS, true)) {
             try {
@@ -126,16 +129,6 @@ public class MainActivity extends AppCompatActivity {
                     phoneAdapter.notifyDataSetChanged();
             }
         });
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                phoneDbHelper.onUpgrade(phoneDbHelper.getWritableDatabase(),0,1);
-                if (phoneDao == null){
-                    phoneDao  = new PhoneDao(MainActivity.this);
-                }
-                phoneDao.savePhones(Const.phoneList);
-            }
-        }).start();
     }
 
 

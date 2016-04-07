@@ -3,6 +3,7 @@ package com.example.administrator.contactdemo;
 import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
+import android.os.PowerManager;
 import android.util.Log;
 
 import com.example.administrator.contactdemo.contact.CountryCodeDao;
@@ -18,6 +19,7 @@ public class MyApplication extends Application{
         super.onCreate();
         instance = this;
         init();
+        acquireWakeLock();
     }
 
     private void init() {
@@ -46,6 +48,31 @@ public class MyApplication extends Application{
 
         // Use 1/8th of the available memory for this memory cache.
         return 1024 * 1024 * memClass / 8;
+    }
+    PowerManager.WakeLock wakeLock = null;
+    //获取电源锁，保持该服务在屏幕熄灭时仍然获取CPU时，保持运行
+    private void acquireWakeLock(){
+        if (null == wakeLock){
+            PowerManager pm = (PowerManager)this.getSystemService(Context.POWER_SERVICE);
+            wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "PostLocationService");
+            if (null != wakeLock){
+                wakeLock.acquire();
+            }
+        }
+    }
+
+    @Override
+    public void onTerminate() {
+        super.onTerminate();
+        releaseWakeLock();
+    }
+
+    //释放设备电源锁
+    private void releaseWakeLock(){
+        if (null != wakeLock){
+            wakeLock.release();
+            wakeLock = null;
+        }
     }
 
 }
