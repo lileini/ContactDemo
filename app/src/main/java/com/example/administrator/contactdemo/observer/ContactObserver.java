@@ -1,13 +1,12 @@
 package com.example.administrator.contactdemo.observer;
 
 import android.app.Activity;
-import android.content.Loader;
 import android.database.ContentObserver;
 import android.os.Handler;
-
-import com.example.administrator.contactdemo.contact.PhonesLoader;
+import android.util.Log;
 
 public class ContactObserver extends ContentObserver {
+    private static final String TAG = "ContactObserver";
     public boolean isAllowUpdate = true;
     /**
      * Creates a content observer.
@@ -15,9 +14,11 @@ public class ContactObserver extends ContentObserver {
      * @param handler The handler to run {@link #onChange} on, or null if none.
      */
     Activity context;
+    Handler handler;
     public ContactObserver(Activity context,Handler handler){
         super(handler);
         this.context = context;
+        this.handler = handler;
     }
     int i = 1;
     @Override
@@ -25,8 +26,8 @@ public class ContactObserver extends ContentObserver {
         super.onChange(selfChange);
         if (isAllowUpdate){
             isAllowUpdate = false;
-            Loader loader = context.getLoaderManager().initLoader(i++, null, PhonesLoader.getInstance(context));
-            loader.startLoading();
+            handler.sendEmptyMessageDelayed(0,1000);
+            Log.i(TAG,"联系人改变");
         }
     }
 }

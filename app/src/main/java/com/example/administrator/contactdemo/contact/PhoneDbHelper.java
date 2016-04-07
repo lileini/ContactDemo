@@ -4,12 +4,12 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-public class ContactDbHelper extends SQLiteOpenHelper{
+public class PhoneDbHelper extends SQLiteOpenHelper{
     private static final String name = "demoDB";
-    private static final String TABLE_NAME = "phones";
+    private String TABLE_NAME = "phones";
     private static final int version = 1;
 
-    public ContactDbHelper(Context context) {
+    public PhoneDbHelper(Context context) {
         super(context, name, null, version);
     }
 
@@ -22,7 +22,7 @@ public class ContactDbHelper extends SQLiteOpenHelper{
 //    private String countryCode = "";
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String s = "create table if not exists"+ TABLE_NAME+"(_id integer primary key autoincrement," +
+        String s = "create table if not exists "+ TABLE_NAME+"(_id integer primary key autoincrement," +
                 "_type integer,_number text,_photo_thumbnail text, _contactId text," +
                 " _contactName text, _contactVersion text, _countryCode text)";
         db.execSQL(s);
@@ -36,6 +36,9 @@ public class ContactDbHelper extends SQLiteOpenHelper{
     }
     public String getTableName(){
         return  TABLE_NAME;
+    }
+    public void setTableName(String tableName){
+        TABLE_NAME = tableName;
     }
 
 }

@@ -100,7 +100,26 @@ public class ContactService extends IntentService {
                 if (BuildConfig.DEBUG)
                     Log.d(TAG, "result = " + result);
                 GrucMobilesResult mobilesResult = GsonUtil.getResult(result, GrucMobilesResult.class);
-                EventBus.getDefault().post(mobilesResult);
+                if (mobilesResult.getCode() != 200)
+                    return;
+                List<GrucMobilesResult.MatchsEntity> matchs = mobilesResult.getMatchs();
+                if (matchs == null || matchs.size() ==0)
+                    return;
+                for (GrucMobilesResult.MatchsEntity matchsEntity : matchs){
+                    String m = matchsEntity.getM();
+                    if (Const.phoneMap == null)
+                        return;
+                    Phone phone = Const.phoneMap.get(m);
+                    if (phone == null)
+                        return;
+                    if (phone.getGrucType() ==Phone.GrucType.SYSTEM){
+                        phone.setGrucType(Phone.GrucType.GRUC);
+                        phone.setGruc_name(matchsEntity.getU());
+                        phone.setGruc_photo(matchsEntity.getI());
+//                        Log.i(TAG, "matchsEntity.getI() = "+ matchsEntity.getI());
+                    }
+                }
+                EventBus.getDefault().post(matchs.get(0));
             }
 
             @Override
@@ -129,11 +148,11 @@ public class ContactService extends IntentService {
             }
         }, params);
     }
-//    {"username": "d1_m1_u1","password":"123456","domain":"caas.grcaassip.com"}
+//    {"username": "qingquan","password":"123456","domain":"caas.grcaassip.com"}
     private void requestAccessToken() {
         String URL = Const.ACCESS_TOKEN_URL;
         RequestParams params = new RequestParams(URL);
-        UserDate userDate = new UserDate("d1_m1_u1","123456","caas.grcaassip.com");
+        UserDate userDate = new UserDate("qingquan","123456","caas.grcaassip.com");
 
         Gson gson = new Gson();
         String s = gson.toJson(userDate);

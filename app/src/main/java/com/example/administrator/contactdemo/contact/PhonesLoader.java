@@ -172,7 +172,6 @@ public class PhonesLoader implements LoaderManager.LoaderCallbacks<Cursor> {
                     notFind=false;
                     if (!oldPhoneList.get(i).getContactVersion().equals(newPhoneList.get(j).getContactVersion())) {
                         Log.i("contact","contact changed-----"+oldPhoneList.get(i).toString());
-
                         newPhoneList.remove(j);
                         oldPhoneList.remove(i);
                         break;
@@ -181,7 +180,7 @@ public class PhonesLoader implements LoaderManager.LoaderCallbacks<Cursor> {
                         break;
                     }
                 }else{
-                    notFind=true;
+                    notFind = true;
                 }
             }
 

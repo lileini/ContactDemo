@@ -46,7 +46,25 @@ public class Phone implements Comparable<Phone>{
     private char letter;
     private int letterByNum; // make it as a tab to order (0 ~ 26 )
 
+    //gruc 属性
+    public String gruc_photo = null;
+    public String gruc_name = "";
 
+    public String getGruc_name() {
+        return gruc_name;
+    }
+
+    public void setGruc_name(String gruc_name) {
+        this.gruc_name = gruc_name;
+    }
+
+    public String getGruc_photo() {
+        return gruc_photo;
+    }
+
+    public void setGruc_photo(String gruc_photo) {
+        this.gruc_photo = gruc_photo;
+    }
     public static class GrucType{
 
         public static final int SYSTEM = 0; // default
