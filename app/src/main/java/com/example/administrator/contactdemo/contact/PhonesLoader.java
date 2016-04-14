@@ -102,6 +102,28 @@ public class PhonesLoader implements LoaderManager.LoaderCallbacks<Cursor> {
 
         Log.i(TAG, TAG + "phoneList.Size= " + Const.phoneList.size());
         Collections.sort(Const.phoneList);
+        HashMap<Character,List<Phone>> map = new HashMap<>(27);//存取字母表
+        char tmp = Const.phoneList.get(0).getLetter();
+        List<Phone> phones = null;
+        for (int i = 0,size = Const.phoneList.size(); i<size;i++){
+            Phone phone = Const.phoneList.get(i);
+            char letter = phone.getLetter();
+            if (i == 0){
+                phones = new ArrayList<>();
+                phones.add(phone);
+            }else {
+                if (tmp == letter){
+                    phones.add(phone);
+                }else {
+                    map.put(tmp,phones);
+                    tmp = letter;
+                    phones = new ArrayList<>();
+                    phones.add(phone);
+
+                }
+            }
+        }
+
     }
 
     /**
@@ -131,6 +153,7 @@ public class PhonesLoader implements LoaderManager.LoaderCallbacks<Cursor> {
                     phone.setLetter();
                     phone.setContactVersion(contactVsersion);
                     phoneList.add(phone);
+
 
                 }
 

@@ -143,10 +143,9 @@ public class ContactService extends IntentService {
                 if (BuildConfig.DEBUG)
                     Log.d(TAG, "ex.toString() = " + ex.toString());
                 String result = ex.toString();
-                result = result.substring(result.indexOf("result: ") + 8);
+//                result = result.substring(result.indexOf("result: ") + 8);
                 Log.i(TAG, "result = " + result);
-                TokenErrorResult tokenErrorResult = GsonUtil.getResult(result, TokenErrorResult.class);
-                if ("PermissionError:this api need auth".equals(tokenErrorResult.getDescription())) {
+                if (result.contains("PermissionError:this api need auth")) {
                     requestAccessToken();
                     Log.i(TAG, " requestAccessToken()");
                 }
