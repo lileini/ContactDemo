@@ -17,7 +17,6 @@ import com.example.administrator.contactdemo.entity.Const;
 import com.example.administrator.contactdemo.entity.GrucMobile;
 import com.example.administrator.contactdemo.entity.GrucMobilesResult;
 import com.example.administrator.contactdemo.entity.GrucUserResult;
-import com.example.administrator.contactdemo.entity.TokenErrorResult;
 import com.example.administrator.contactdemo.entity.UserDate;
 import com.example.administrator.contactdemo.gruc.GrucDao;
 import com.example.administrator.contactdemo.gruc.GrucDbHelper;
@@ -42,9 +41,7 @@ public class ContactService extends IntentService {
 
     private static final String TAG = "ContactService";
     SharePrefrenceManager sharePrefrenceManager;
-    private PhoneDbHelper phoneDbHelper;
     private PhoneDao phoneDao;
-    private GrucDbHelper grucDbHelper;
     private GrucDao grucDao;
 
     /**
@@ -59,8 +56,7 @@ public class ContactService extends IntentService {
     public void onCreate() {
         super.onCreate();
         sharePrefrenceManager = new SharePrefrenceManager(this);
-        phoneDbHelper = new PhoneDbHelper(this);
-        grucDbHelper = new GrucDbHelper(this);
+
     }
 
     @Nullable
@@ -105,7 +101,7 @@ public class ContactService extends IntentService {
             @Override
             public void onSuccess(String result) {
                 if (BuildConfig.DEBUG)
-                    Log.d(TAG, "requestAllGrucUser result = " + result);
+                    Log.d(TAG, "requestAllGrucUser success result = " + result);
                 GrucUserResult grucUserResult = GsonUtil.getResult(result,GrucUserResult.class);
                 if (grucUserResult == null)
                     return;
@@ -128,7 +124,10 @@ public class ContactService extends IntentService {
                         return;
                     }
                 }
-                grucDbHelper.onUpgrade(grucDbHelper.getWritableDatabase(),0,1);
+                GrucDbHelper grucDbHelper = new GrucDbHelper(ContactService.this);
+                grucDbHelper.updateTable(null);
+                grucDbHelper.onCreate(grucDbHelper.getWritableDatabase());
+//                grucDbHelper.onUpgrade(grucDbHelper.getWritableDatabase(),1,1);
                 if (grucDao == null){
                     grucDao  = new GrucDao(ContactService.this);
                 }
@@ -139,12 +138,12 @@ public class ContactService extends IntentService {
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                Log.d(TAG, "ex.getMessage() = " + ex.getMessage());
+                Log.d(TAG, "requestAllGrucUser ex.getMessage() = " + ex.getMessage());
                 if (BuildConfig.DEBUG)
                     Log.d(TAG, "ex.toString() = " + ex.toString());
                 String result = ex.toString();
 //                result = result.substring(result.indexOf("result: ") + 8);
-                Log.i(TAG, "result = " + result);
+                Log.i(TAG, "requestAllGrucUser result = " + result);
                 if (result.contains("PermissionError:this api need auth")) {
                     requestAccessToken();
                     Log.i(TAG, " requestAccessToken()");
@@ -189,7 +188,7 @@ public class ContactService extends IntentService {
             @Override
             public void onSuccess(String result) {
                 if (BuildConfig.DEBUG)
-                    Log.d(TAG, "result = " + result);
+                    Log.d(TAG, "requestGrucMobile result = " + result);
                 GrucMobilesResult mobilesResult = GsonUtil.getResult(result, GrucMobilesResult.class);
                 if (mobilesResult.getCode() != 200)
                     return;
@@ -210,7 +209,8 @@ public class ContactService extends IntentService {
 //                        Log.i(TAG, "matchsEntity.getI() = "+ matchsEntity.getI());
                     }
                 }
-                phoneDbHelper.onUpgrade(phoneDbHelper.getWritableDatabase(),0,1);
+                PhoneDbHelper phoneDbHelper = new PhoneDbHelper(ContactService.this);
+                phoneDbHelper.onUpgrade(phoneDbHelper.getWritableDatabase(),1,1);
                 if (phoneDao == null){
                     phoneDao  = new PhoneDao(ContactService.this);
                 }
@@ -220,14 +220,13 @@ public class ContactService extends IntentService {
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                Log.d(TAG, "ex.getMessage() = " + ex.getMessage());
+                Log.d(TAG, "requestGrucMobile ex.getMessage() = " + ex.getMessage());
                 if (BuildConfig.DEBUG)
                     Log.d(TAG,"ex.toString() = "+ex.toString());
                 String result = ex.toString();
                 result = result.substring(result.indexOf("result: ")+8);
                 Log.i(TAG,"result = "+result);
-                TokenErrorResult tokenErrorResult = GsonUtil.getResult(result, TokenErrorResult.class);
-                if ("PermissionError:this api need auth".equals(tokenErrorResult.getDescription())){
+                if (ex.toString().contains("PermissionError:this api need auth")){
                     requestAccessToken();
                     Log.i(TAG," requestAccessToken()");
                 }
@@ -273,7 +272,7 @@ public class ContactService extends IntentService {
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                Log.d(TAG, "ex.getMessage() = " + ex.getMessage());
+                Log.d(TAG, "requestAccessToken ex.getMessage() = " + ex.getMessage());
             }
 
             @Override

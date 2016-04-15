@@ -7,13 +7,13 @@ import android.database.sqlite.SQLiteDatabase;
 import java.util.List;
 
 public class PhoneDao {
-    private final PhoneDbHelper dbHelper;
-
+    private Context context;
     public PhoneDao(Context context) {
-        dbHelper = new PhoneDbHelper(context);
+        this.context = context;
     }
 
     public void savePhone(Phone phone){
+        PhoneDbHelper dbHelper = new PhoneDbHelper(context);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.beginTransaction();
         db.execSQL("insert into "+ dbHelper.getTableName() +"(_type,_number,_photo_thumbnail,_contactId," +
@@ -27,6 +27,7 @@ public class PhoneDao {
     }
 
     public void savePhones(List<Phone> phones){
+        PhoneDbHelper dbHelper = new PhoneDbHelper(context);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.beginTransaction();
         for (Phone phone:phones){
@@ -42,6 +43,7 @@ public class PhoneDao {
         db.endTransaction();
     }
     public void updatePhone(Phone phone) {
+        PhoneDbHelper dbHelper = new PhoneDbHelper(context);
         SQLiteDatabase database = dbHelper.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("_type", phone.getType());
@@ -56,6 +58,7 @@ public class PhoneDao {
         contentValues.put("_gruc_name", phone.getGruc_name());
         database.update(dbHelper.getTableName(), contentValues, "_id=?",
                 new String[]{String.valueOf(phone.getId())});
+        dbHelper.close();
     }
     /*public void deletePhone(Phone phone){
         SQLiteDatabase db = dbHelper.getWritableDatabase();

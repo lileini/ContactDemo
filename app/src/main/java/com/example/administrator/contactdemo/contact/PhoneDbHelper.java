@@ -30,9 +30,13 @@ public class PhoneDbHelper extends SQLiteOpenHelper{
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.beginTransaction();
         String sql = "DROP TABLE IF EXISTS " + TABLE_NAME;
         db.execSQL(sql);
+//        db.execSQL(s);
         onCreate(db);
+        db.setTransactionSuccessful();
+        db.endTransaction();
     }
     public String getTableName(){
         return  TABLE_NAME;

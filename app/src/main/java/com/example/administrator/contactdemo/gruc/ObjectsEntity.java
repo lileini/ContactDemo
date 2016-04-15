@@ -87,4 +87,18 @@ public class ObjectsEntity {
     public String getNickname() {
         return nickname;
     }
+
+    @Override
+    public String toString() {
+        return "ObjectsEntity{" +
+                "domain_id='" + domain_id + '\'' +
+                ", email='" + email + '\'' +
+                ", enable=" + enable +
+                ", icon_url='" + icon_url + '\'' +
+                ", id='" + id + '\'' +
+                ", mobile='" + mobile + '\'' +
+                ", name='" + name + '\'' +
+                ", nickname='" + nickname + '\'' +
+                '}';
+    }
 }
