@@ -1,7 +1,7 @@
 package com.example.administrator.contactdemo.entity;
 
 import com.example.administrator.contactdemo.contact.Phone;
-import com.example.administrator.contactdemo.gruc.ObjectsEntity;
+import com.example.administrator.contactdemo.gruc.Gruc;
 
 import java.util.HashMap;
 import java.util.List;
@@ -12,7 +12,7 @@ public class Const {
     }
     public static final String CONTACT_LOAD_FINISHED  ="CONTACT_LOAD_FINISHED";
     public static List<Phone> phoneList;
-    public static List<ObjectsEntity> grucUsersList;
+    public static List<Gruc> grucUsersList;
 
     public static HashMap<String,Phone> phoneMap;
 

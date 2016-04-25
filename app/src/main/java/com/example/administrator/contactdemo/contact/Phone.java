@@ -4,8 +4,6 @@ import android.text.SpannableString;
 import android.text.TextUtils;
 
 import com.github.promeg.pinyinhelper.Pinyin;
-import com.lidroid.xutils.db.annotation.Column;
-import com.lidroid.xutils.db.annotation.Id;
 
 public class Phone implements Comparable<Phone>{
     public static final String HOME = "Home"; // =1
@@ -13,21 +11,14 @@ public class Phone implements Comparable<Phone>{
     public static final String MOBILE = "Mobile"; // =2
     public static final String OTHER = "Other"; // default
 
-    @Id
+
     private long id;
-    @Column(column = "type")
     private String type;
-    @Column(column = "number")
     private String number;
-    @Column(column = "photo_thumbnail")
     private String photo_thumbnail;
-    @Column(column = "contactId")
     private String contactId;
-    @Column(column = "contactName")
     private String contactName;
-    @Column(column = "contactVersion")
     private String contactVersion;
-    @Column(column = "countryCode")
     private String countryCode = "";
     /**
      * grucType stand for is friend , gruc or not all
@@ -35,7 +26,6 @@ public class Phone implements Comparable<Phone>{
      * 1 stand for friend
      * 2 stand for gruc
      */
-    @Column(column = "grucType")
     private int grucType = GrucType.SYSTEM;
 
     private SpannableString spannableName;
@@ -47,24 +37,72 @@ public class Phone implements Comparable<Phone>{
     private int letterByNum; // make it as a tab to order (0 ~ 26 )
 
     //gruc 属性
-    public String gruc_photo = null;
-    public String gruc_name = "";
+    private String email;
+    private String icon_url;
+    private String mobile;
+    private String name;
+    private String nickname;
 
-    public String getGruc_name() {
-        return gruc_name;
+    public Phone(long id, String type, String number, String photo_thumbnail, String contactId, String contactName, String contactVersion, String countryCode,
+                 int grucType, String email, String icon_url, String mobile, String name, String nickname) {
+        this.id = id;
+        this.type = type;
+        this.number = number;
+        this.photo_thumbnail = photo_thumbnail;
+        this.contactId = contactId;
+        this.contactName = contactName;
+        this.contactVersion = contactVersion;
+        this.countryCode = countryCode;
+        this.grucType = grucType;
+        this.email = email;
+        this.icon_url = icon_url;
+        this.mobile = mobile;
+        this.name = name;
+        this.nickname = nickname;
     }
 
-    public void setGruc_name(String gruc_name) {
-        this.gruc_name = gruc_name;
+    public String getNickname() {
+        return nickname;
     }
 
-    public String getGruc_photo() {
-        return gruc_photo;
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
-    public void setGruc_photo(String gruc_photo) {
-        this.gruc_photo = gruc_photo;
+    public String getEmail() {
+        return email;
     }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getIcon_url() {
+        return icon_url;
+    }
+
+    public void setIcon_url(String icon_url) {
+        this.icon_url = icon_url;
+    }
+
+
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public static class GrucType{
 
         public static final int SYSTEM = 0; // default

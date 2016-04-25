@@ -1,6 +1,6 @@
 package com.example.administrator.contactdemo.gruc;
 
-public class ObjectsEntity {
+public class Gruc {
 
     /**
      * domain_id : DOMAINc2b718fe-f73f-11e5-870a-fa163e17f4ed
@@ -90,7 +90,7 @@ public class ObjectsEntity {
 
     @Override
     public String toString() {
-        return "ObjectsEntity{" +
+        return "Gruc{" +
                 "domain_id='" + domain_id + '\'' +
                 ", email='" + email + '\'' +
                 ", enable=" + enable +

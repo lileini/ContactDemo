@@ -1,6 +1,6 @@
 package com.example.administrator.contactdemo.entity;
 
-import com.example.administrator.contactdemo.gruc.ObjectsEntity;
+import com.example.administrator.contactdemo.gruc.Gruc;
 
 import java.io.Serializable;
 import java.util.List;
@@ -29,7 +29,7 @@ public class GrucUserResult implements Serializable{
      * owner : {"developer_id":"DEVELOc2a60578-f73f-11e5-870a-fa163e17f4ed","domain_name":"caas.grcaassip.com","id":"DOMAINc2b718fe-f73f-11e5-870a-fa163e17f4ed"}
      */
 
-    private List<ObjectsEntity> objects;
+    private List<Gruc> objects;
 
     public void setNum_results(int num_results) {
         this.num_results = num_results;
@@ -43,7 +43,7 @@ public class GrucUserResult implements Serializable{
         this.total_pages = total_pages;
     }
 
-    public void setObjects(List<ObjectsEntity> objects) {
+    public void setObjects(List<Gruc> objects) {
         this.objects = objects;
     }
 
@@ -59,7 +59,7 @@ public class GrucUserResult implements Serializable{
         return total_pages;
     }
 
-    public List<ObjectsEntity> getObjects() {
+    public List<Gruc> getObjects() {
         return objects;
     }
 

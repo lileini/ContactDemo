@@ -46,6 +46,7 @@
 
         </activity>
         <service android:name=".service.ContactService"/>
+        <service android:name=".service.GrucService"/>
         <receiver android:name=".broadcastreciever.NetworkConnectStateReceiver">
             <intent-filter >
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>

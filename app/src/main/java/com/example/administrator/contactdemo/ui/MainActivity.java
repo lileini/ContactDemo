@@ -18,13 +18,17 @@ import com.example.administrator.contactdemo.MyApplication;
 import com.example.administrator.contactdemo.R;
 import com.example.administrator.contactdemo.adapter.PhoneAdapter;
 import com.example.administrator.contactdemo.broadcastreciever.NetworkConnectStateReceiver;
+import com.example.administrator.contactdemo.contact.Phone;
 import com.example.administrator.contactdemo.contact.PhoneDao;
 import com.example.administrator.contactdemo.contact.PhoneDbHelper;
 import com.example.administrator.contactdemo.contact.PhonesLoader;
 import com.example.administrator.contactdemo.entity.Const;
 import com.example.administrator.contactdemo.entity.GrucMobilesResult;
+import com.example.administrator.contactdemo.gruc.Gruc;
+import com.example.administrator.contactdemo.gruc.GrucDao;
 import com.example.administrator.contactdemo.observer.ContactObserver;
 import com.example.administrator.contactdemo.service.ContactService;
+import com.example.administrator.contactdemo.service.GrucService;
 import com.example.administrator.contactdemo.util.NetworkManager;
 import com.example.administrator.contactdemo.util.PermissionManager;
 import com.example.administrator.contactdemo.util.SharePrefrenceManager;
@@ -33,6 +37,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -61,6 +66,18 @@ public class MainActivity extends AppCompatActivity {
         }else {
             init();
         }
+        Intent intent = new Intent(this, GrucService.class);
+        startService(intent);
+        try {
+
+            List<Phone> phoneList = new PhoneDao(this, null).getPhoneList();
+            Log.i(TAG,"db getPhoneList = " + phoneList);
+            List<Gruc> grucList = new GrucDao(this, null).getGrucList();
+            Log.i(TAG,"db getGrucList = " + grucList);
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.i(TAG,"db getPhoneList = fail");
+        }
     }
     ContactObserver mContactObserver;
     PhoneDbHelper phoneDbHelper;
@@ -68,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
     NetworkConnectStateReceiver networkConnectStateReceiver;
     private void init() {
         EventBus.getDefault().register(this);
-        phoneDbHelper = new PhoneDbHelper(MainActivity.this);
+        phoneDbHelper = PhoneDbHelper.getInstance(MainActivity.this,"gruc");
         mContactObserver = new ContactObserver(this,handler);
         startPhoneLoader();
 
