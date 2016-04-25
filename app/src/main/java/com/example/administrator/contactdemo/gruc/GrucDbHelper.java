@@ -22,6 +22,7 @@ public class GrucDbHelper extends SQLiteOpenHelper{
         this.context = context;
         if (!TextUtils.isEmpty(table_name))
             this.TABLE_NAME = table_name;
+
     }
 
     @Override
@@ -40,7 +41,7 @@ public class GrucDbHelper extends SQLiteOpenHelper{
         String s = "create table if not exists "+ TABLE_NAME+"(_id integer primary key autoincrement," +
                 "_icon_url text,_mobile text,_name text,_nickname text," +
                 "_email text)";
-        close();
+        db.execSQL(s);
         db.setTransactionSuccessful();
         db.endTransaction();
     }

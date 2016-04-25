@@ -26,6 +26,7 @@ import com.example.administrator.contactdemo.entity.Const;
 import com.example.administrator.contactdemo.entity.GrucMobilesResult;
 import com.example.administrator.contactdemo.gruc.Gruc;
 import com.example.administrator.contactdemo.gruc.GrucDao;
+import com.example.administrator.contactdemo.gruc.GrucDbHelper;
 import com.example.administrator.contactdemo.observer.ContactObserver;
 import com.example.administrator.contactdemo.service.ContactService;
 import com.example.administrator.contactdemo.service.GrucService;
@@ -182,6 +183,7 @@ public class MainActivity extends AppCompatActivity {
 
         EventBus.getDefault().unregister(this);
         unRegisterReceiverAndObserver();
+        GrucDbHelper.getInstance(this,null).close();
     }
 
 }

@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public class PhonesLoader implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -102,7 +103,9 @@ public class PhonesLoader implements LoaderManager.LoaderCallbacks<Cursor> {
 
         Log.i(TAG, TAG + "phoneList.Size= " + Const.phoneList.size());
         Collections.sort(Const.phoneList);
-        HashMap<Character,List<Phone>> map = new HashMap<>(27);//存取字母表
+        if (Const.phoneList == null || Const.phoneList.size() == 0)
+            return;
+        HashMap<Character,List<Phone>> map = new LinkedHashMap<>(27);//存取字母表
         char tmp = Const.phoneList.get(0).getLetter();
         List<Phone> phones = null;
         for (int i = 0,size = Const.phoneList.size(); i<size;i++){

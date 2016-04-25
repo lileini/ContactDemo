@@ -68,7 +68,6 @@ public class GrucDao {
     public List<Gruc> getGrucList(){
         GrucDbHelper dbHelper = GrucDbHelper.getInstance(context,table_name);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        db.beginTransaction();
         Cursor cursor = db.query(true, dbHelper.getTableName(), new String[]{"_icon_url", "_mobile", "_name", "_nickname", "_email"},
                 null, null, null, null, null, null);
         List<Gruc> grucList = new ArrayList<>();
@@ -88,9 +87,12 @@ public class GrucDao {
             gruc.setIcon_url(_icon_url);
             grucList.add(gruc);
         }
-        db.setTransactionSuccessful();
-        db.endTransaction();
+        cursor.close();
+
         return grucList;
+    }
+    public void closeDB(){
+        GrucDbHelper.getInstance(context,table_name).close();
     }
     /*public void deletePhone(Phone phone){
         SQLiteDatabase db = dbHelper.getWritableDatabase();

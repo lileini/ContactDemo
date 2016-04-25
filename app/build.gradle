@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.administrator.contactdemo"
-        minSdkVersion 14
+        minSdkVersion 16
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
@@ -31,4 +31,6 @@ dependencies {
     compile 'com.google.code.gson:gson:2.6.2'
     compile 'org.xutils:xutils:3.3.+'
     compile 'org.greenrobot:eventbus:3.0.0'
+
+
 }
